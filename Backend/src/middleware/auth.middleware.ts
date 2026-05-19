@@ -7,7 +7,7 @@ interface JwtPayload {
 }
 
 export interface AuthRequest extends Request {
-  user?: any;
+  user?: import('../models/User.model').IUser;
 }
 
 export const protect = async (

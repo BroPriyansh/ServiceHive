@@ -5,12 +5,13 @@ import api from '../../api/axios';
 
 import { useAuth } from '../../hooks/useAuth';
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const navigate = useNavigate();
 
   const { login } = useAuth();
 
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
     password: '',
   });
@@ -34,7 +35,7 @@ const LoginPage = () => {
 
     try {
       const res = await api.post(
-        '/auth/login',
+        '/auth/register',
         formData
       );
 
@@ -47,7 +48,7 @@ const LoginPage = () => {
     } catch (error: unknown) {
       const errorMessage = error instanceof Error 
         ? error.message 
-        : 'Invalid credentials';
+        : 'Registration failed. Please try again.';
       setError(errorMessage);
     }
   };
@@ -59,7 +60,7 @@ const LoginPage = () => {
         className="w-[400px] rounded-lg bg-white p-6 shadow-md"
       >
         <h1 className="mb-5 text-2xl font-bold">
-          Login
+          Register
         </h1>
 
         {error && (
@@ -69,12 +70,23 @@ const LoginPage = () => {
         )}
 
         <input
+          type="text"
+          name="name"
+          placeholder="Name"
+          value={formData.name}
+          onChange={handleChange}
+          className="mb-4 w-full rounded border p-3"
+          required
+        />
+
+        <input
           type="email"
           name="email"
           placeholder="Email"
           value={formData.email}
           onChange={handleChange}
           className="mb-4 w-full rounded border p-3"
+          required
         />
 
         <input
@@ -84,22 +96,24 @@ const LoginPage = () => {
           value={formData.password}
           onChange={handleChange}
           className="mb-4 w-full rounded border p-3"
+          required
+          minLength={6}
         />
 
         <button
           type="submit"
           className="w-full rounded bg-black py-3 text-white"
         >
-          Login
+          Register
         </button>
 
         <p className="mt-4 text-center text-gray-600">
-          Don't have an account?{' '}
+          Already have an account?{' '}
           <Link 
-            to="/register" 
+            to="/login" 
             className="text-blue-500 hover:underline"
           >
-            Register
+            Login
           </Link>
         </p>
       </form>
@@ -107,4 +121,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

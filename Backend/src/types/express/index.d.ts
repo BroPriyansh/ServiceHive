@@ -1,0 +1,8 @@
+import 'express';
+import { IUser } from '../../models/User.model';
+
+declare module 'express' {
+  interface Request {
+    user?: IUser;
+  }
+}

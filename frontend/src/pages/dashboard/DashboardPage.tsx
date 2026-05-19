@@ -1,145 +1,86 @@
-import {
-  Link,
-  useLocation,
-} from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
-import { useState } from 'react';
+import api from '../../api/axios';
+
+import Layout from '../../components/layout/Layout';
+
+import { useTheme } from '../../context/ThemeContext';
 
 const DashboardPage = () => {
+  const { darkMode, toggleTheme } = useTheme();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [stats, setStats] = useState({
+    total: 0,
+    qualified: 0,
+    contacted: 0,
+  });
 
-  const location = useLocation();
-
-  const [darkMode, setDarkMode] =
-    useState(true);
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await api.get('/leads');
+        const leads = response.data.data;
+        setStats({
+          total: leads.length,
+          qualified: leads.filter((l: { status: string }) => l.status === 'Qualified').length,
+          contacted: leads.filter((l: { status: string }) => l.status === 'Contacted').length,
+        });
+      } catch (err) {
+        setError('Failed to load dashboard data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStats();
+  }, []);
 
   return (
+    <Layout>
+      {/* TOP */}
 
-    <div
-      className={`flex min-h-screen ${
-        darkMode
-          ? 'bg-[#0f172a] text-white'
-          : 'bg-gray-100 text-black'
-      }`}
-    >
+      <div className="mb-10 flex items-center justify-between">
 
-      {/* SIDEBAR */}
+        <div>
 
-      <div
-        className={`w-[250px] p-6 ${
-          darkMode
-            ? 'bg-[#1e293b]'
-            : 'bg-white border-r'
-        }`}
-      >
+          <h1 className="text-5xl font-bold">
+            Dashboard
+          </h1>
 
-        <h1 className="mb-10 text-4xl font-bold">
-          ServiceHive
-        </h1>
-
-        <ul className="space-y-4">
-
-          <Link to="/dashboard">
-
-            <li
-              className={`cursor-pointer rounded-lg p-4 ${
-                location.pathname ===
-                '/dashboard'
-                  ? 'bg-blue-500 text-white'
-                  : darkMode
-                  ? 'hover:bg-[#334155]'
-                  : 'hover:bg-gray-200'
-              }`}
-            >
-              Dashboard
-            </li>
-
-          </Link>
-
-          <Link to="/leads">
-
-            <li
-              className={`cursor-pointer rounded-lg p-4 ${
-                location.pathname ===
-                '/leads'
-                  ? 'bg-blue-500 text-white'
-                  : darkMode
-                  ? 'hover:bg-[#334155]'
-                  : 'hover:bg-gray-200'
-              }`}
-            >
-              Leads
-            </li>
-
-          </Link>
-
-          <Link to="/settings">
-
-            <li
-              className={`cursor-pointer rounded-lg p-4 ${
-                location.pathname ===
-                '/settings'
-                  ? 'bg-blue-500 text-white'
-                  : darkMode
-                  ? 'hover:bg-[#334155]'
-                  : 'hover:bg-gray-200'
-              }`}
-            >
-              Settings
-            </li>
-
-          </Link>
-
-        </ul>
-
-      </div>
-
-      {/* MAIN */}
-
-      <div className="flex-1 p-10">
-
-        {/* TOP */}
-
-        <div className="mb-10 flex items-center justify-between">
-
-          <div>
-
-            <h1 className="text-5xl font-bold">
-              Dashboard
-            </h1>
-
-            <p
-              className={`mt-2 ${
-                darkMode
-                  ? 'text-gray-400'
-                  : 'text-gray-600'
-              }`}
-            >
-              Welcome to your CRM dashboard
-            </p>
-
-          </div>
-
-          <button
-            onClick={() =>
-              setDarkMode(
-                !darkMode
-              )
-            }
-            className={`rounded-lg border px-4 py-2 ${
+          <p
+            className={`mt-2 ${
               darkMode
-                ? 'bg-[#1e293b]'
-                : 'bg-white'
+                ? 'text-gray-400'
+                : 'text-gray-600'
             }`}
           >
-            {darkMode
-              ? '☀️'
-              : '🌙'}
-          </button>
+            Welcome to your CRM dashboard
+          </p>
 
         </div>
 
-        {/* STATS */}
+        <button
+          onClick={toggleTheme}
+          className={`rounded-lg border px-4 py-2 ${
+            darkMode
+              ? 'bg-[#1e293b]'
+              : 'bg-white'
+          }`}
+        >
+          {darkMode
+            ? '☀️'
+            : '🌙'}
+        </button>
 
+      </div>
+
+      {/* STATS */}
+
+      {loading ? (
+        <p className="text-gray-400">Loading...</p>
+      ) : error ? (
+        <p className="text-red-500">{error}</p>
+      ) : (
         <div className="grid grid-cols-3 gap-6">
 
           <div
@@ -155,7 +96,7 @@ const DashboardPage = () => {
             </h2>
 
             <p className="mt-4 text-5xl font-bold">
-              24
+              {stats.total}
             </p>
 
           </div>
@@ -173,7 +114,7 @@ const DashboardPage = () => {
             </h2>
 
             <p className="mt-4 text-5xl font-bold">
-              10
+              {stats.qualified}
             </p>
 
           </div>
@@ -191,16 +132,14 @@ const DashboardPage = () => {
             </h2>
 
             <p className="mt-4 text-5xl font-bold">
-              7
+              {stats.contacted}
             </p>
 
           </div>
 
         </div>
-
-      </div>
-
-    </div>
+      )}
+    </Layout>
   );
 };
 

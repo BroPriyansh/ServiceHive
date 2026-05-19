@@ -3,29 +3,17 @@ import {
   useState,
 } from 'react';
 
-import {
-  Link,
-  useLocation,
-} from 'react-router-dom';
-
 import axios from '../../api/axios';
 
-interface Lead {
-  _id: string;
-  name: string;
-  email: string;
-  status: string;
-  source: string;
-}
+import Layout from '../../components/layout/Layout';
+
+import { useTheme } from '../../context/ThemeContext';
+
+import type { Lead } from '../../types';
 
 const LeadsPage = () => {
 
-  const location = useLocation();
-
-  // STATES
-
-  const [darkMode, setDarkMode] =
-    useState(true);
+  const { darkMode, toggleTheme } = useTheme();
 
   const [leads, setLeads] = useState<
     Lead[]
@@ -242,159 +230,71 @@ const LeadsPage = () => {
   // EXPORT CSV
 
   const handleExport = () => {
-
     window.open(
-      'http://localhost:5000/api/leads/export/csv',
+      `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/leads/export/csv`,
       '_blank'
     );
-
   };
 
   return (
 
-    <div
-      className={`flex min-h-screen ${
-        darkMode
-          ? 'bg-[#0f172a] text-white'
-          : 'bg-gray-100 text-black'
-      }`}
-    >
+    <Layout>
+      {/* TOP */}
 
-      {/* SIDEBAR */}
+      <div className="mb-8 flex items-center justify-between">
 
-      <div
-        className={`w-[250px] p-6 ${
-          darkMode
-            ? 'bg-[#1e293b]'
-            : 'bg-white border-r'
-        }`}
-      >
+        <div>
 
-        <h1 className="mb-10 text-4xl font-bold">
-          ServiceHive
-        </h1>
+          <h1 className="text-5xl font-bold">
+            Leads
+          </h1>
 
-        <ul className="space-y-4">
-
-          <Link to="/dashboard">
-
-            <li
-              className={`cursor-pointer rounded-lg p-4 ${
-                location.pathname ===
-                '/dashboard'
-                  ? 'bg-blue-500 text-white'
-                  : darkMode
-                  ? 'hover:bg-[#334155]'
-                  : 'hover:bg-gray-200'
-              }`}
-            >
-              Dashboard
-            </li>
-
-          </Link>
-
-          <Link to="/leads">
-
-            <li
-              className={`cursor-pointer rounded-lg p-4 ${
-                location.pathname ===
-                '/leads'
-                  ? 'bg-blue-500 text-white'
-                  : darkMode
-                  ? 'hover:bg-[#334155]'
-                  : 'hover:bg-gray-200'
-              }`}
-            >
-              Leads
-            </li>
-
-          </Link>
-
-          <Link to="/settings">
-
-            <li
-              className={`cursor-pointer rounded-lg p-4 ${
-                location.pathname ===
-                '/settings'
-                  ? 'bg-blue-500 text-white'
-                  : darkMode
-                  ? 'hover:bg-[#334155]'
-                  : 'hover:bg-gray-200'
-              }`}
-            >
-              Settings
-            </li>
-
-          </Link>
-
-        </ul>
-
-      </div>
-
-      {/* MAIN */}
-
-      <div className="flex-1 p-10">
-
-        {/* TOP */}
-
-        <div className="mb-8 flex items-center justify-between">
-
-          <div>
-
-            <h1 className="text-5xl font-bold">
-              Leads
-            </h1>
-
-            <p
-              className={`mt-2 ${
-                darkMode
-                  ? 'text-gray-400'
-                  : 'text-gray-600'
-              }`}
-            >
-              Manage all your leads
-            </p>
-
-          </div>
-
-          <div className="flex gap-3">
-
-            <button
-              onClick={() =>
-                setDarkMode(
-                  !darkMode
-                )
-              }
-              className={`rounded-lg border px-4 py-2 ${
-                darkMode
-                  ? 'bg-[#1e293b]'
-                  : 'bg-white'
-              }`}
-            >
-              {darkMode
-                ? '☀️'
-                : '🌙'}
-            </button>
-
-            <button
-              onClick={handleExport}
-              className="rounded-lg bg-green-500 px-5 py-2 text-white"
-            >
-              Export CSV
-            </button>
-
-            <button
-              onClick={() =>
-                setShowModal(true)
-              }
-              className="rounded-lg bg-white px-5 py-2 text-black"
-            >
-              Add Lead
-            </button>
-
-          </div>
+          <p
+            className={`mt-2 ${
+              darkMode
+                ? 'text-gray-400'
+                : 'text-gray-600'
+            }`}
+          >
+            Manage all your leads
+          </p>
 
         </div>
+
+        <div className="flex gap-3">
+
+          <button
+            onClick={toggleTheme}
+            className={`rounded-lg border px-4 py-2 ${
+              darkMode
+                ? 'bg-[#1e293b]'
+                : 'bg-white'
+            }`}
+          >
+            {darkMode
+              ? '☀️'
+              : '🌙'}
+          </button>
+
+          <button
+            onClick={handleExport}
+            className="rounded-lg bg-green-500 px-5 py-2 text-white"
+          >
+            Export CSV
+          </button>
+
+          <button
+            onClick={() =>
+              setShowModal(true)
+            }
+            className="rounded-lg bg-white px-5 py-2 text-black"
+          >
+            Add Lead
+          </button>
+
+        </div>
+
+      </div>
 
         {/* FILTERS */}
 
@@ -638,8 +538,6 @@ const LeadsPage = () => {
 
         </div>
 
-      </div>
-
       {/* CREATE MODAL */}
 
       {showModal && (
@@ -876,7 +774,7 @@ const LeadsPage = () => {
 
       )}
 
-    </div>
+    </Layout>
   );
 };
 

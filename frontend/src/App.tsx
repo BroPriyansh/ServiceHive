@@ -7,6 +7,8 @@ import {
 
 import LoginPage from './pages/auth/LoginPage';
 
+import RegisterPage from './pages/auth/RegisterPage';
+
 import DashboardPage from './pages/dashboard/DashboardPage';
 
 import LeadsPage from './pages/leads/LeadsPage';
@@ -26,6 +28,13 @@ const App = () => {
         <Route
           path="/login"
           element={<LoginPage />}
+        />
+
+        {/* REGISTER */}
+
+        <Route
+          path="/register"
+          element={<RegisterPage />}
         />
 
         {/* DASHBOARD */}

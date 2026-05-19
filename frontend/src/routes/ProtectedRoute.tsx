@@ -2,9 +2,11 @@ import {
   Navigate,
 } from 'react-router-dom';
 
-import {
+import type {
   ReactNode,
 } from 'react';
+
+import { useAuth } from '../hooks/useAuth';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -13,9 +15,7 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({
   children,
 }: ProtectedRouteProps) => {
-
-  const token =
-    localStorage.getItem('token');
+  const { token } = useAuth();
 
   if (!token) {
     return (

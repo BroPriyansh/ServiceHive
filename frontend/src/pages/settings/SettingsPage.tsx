@@ -1,254 +1,137 @@
-import {
-  Link,
-  useLocation,
-  useNavigate,
-} from 'react-router-dom';
+import Layout from '../../components/layout/Layout';
 
-import { useState } from 'react';
+import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../hooks/useAuth';
 
 const SettingsPage = () => {
-
-  const location = useLocation();
-
-  const navigate = useNavigate();
-
-  const [darkMode, setDarkMode] =
-    useState(true);
-
-  // USER DATA
-
-  const user =
-    JSON.parse(
-      localStorage.getItem('user') || '{}'
-    );
-
-  // LOGOUT
-
-  const handleLogout = () => {
-
-    localStorage.removeItem('token');
-
-    localStorage.removeItem('user');
-
-    navigate('/login');
-
-  };
+  const { darkMode, toggleTheme } = useTheme();
+  const { user, logout } = useAuth();
 
   return (
+    <Layout>
+      {/* TOP */}
 
-    <div
-      className={`flex min-h-screen ${
-        darkMode
-          ? 'bg-[#0f172a] text-white'
-          : 'bg-gray-100 text-black'
-      }`}
-    >
+      <div className="mb-10 flex items-center justify-between">
 
-      {/* SIDEBAR */}
+        <div>
 
-      <div
-        className={`w-[250px] p-6 ${
-          darkMode
-            ? 'bg-[#1e293b]'
-            : 'bg-white border-r'
-        }`}
-      >
+          <h1 className="text-5xl font-bold">
+            Settings
+          </h1>
 
-        <h1 className="mb-10 text-4xl font-bold">
-          ServiceHive
-        </h1>
-
-        <ul className="space-y-4">
-
-          <Link to="/dashboard">
-
-            <li
-              className={`cursor-pointer rounded-lg p-4 ${
-                location.pathname ===
-                '/dashboard'
-                  ? 'bg-blue-500 text-white'
-                  : darkMode
-                  ? 'hover:bg-[#334155]'
-                  : 'hover:bg-gray-200'
-              }`}
-            >
-              Dashboard
-            </li>
-
-          </Link>
-
-          <Link to="/leads">
-
-            <li
-              className={`cursor-pointer rounded-lg p-4 ${
-                location.pathname ===
-                '/leads'
-                  ? 'bg-blue-500 text-white'
-                  : darkMode
-                  ? 'hover:bg-[#334155]'
-                  : 'hover:bg-gray-200'
-              }`}
-            >
-              Leads
-            </li>
-
-          </Link>
-
-          <Link to="/settings">
-
-            <li
-              className={`cursor-pointer rounded-lg p-4 ${
-                location.pathname ===
-                '/settings'
-                  ? 'bg-blue-500 text-white'
-                  : darkMode
-                  ? 'hover:bg-[#334155]'
-                  : 'hover:bg-gray-200'
-              }`}
-            >
-              Settings
-            </li>
-
-          </Link>
-
-        </ul>
-
-      </div>
-
-      {/* MAIN */}
-
-      <div className="flex-1 p-10">
-
-        {/* TOP */}
-
-        <div className="mb-10 flex items-center justify-between">
-
-          <div>
-
-            <h1 className="text-5xl font-bold">
-              Settings
-            </h1>
-
-            <p
-              className={`mt-2 ${
-                darkMode
-                  ? 'text-gray-400'
-                  : 'text-gray-600'
-              }`}
-            >
-              Manage your account settings
-            </p>
-
-          </div>
-
-          <button
-            onClick={() =>
-              setDarkMode(
-                !darkMode
-              )
-            }
-            className={`rounded-lg border px-4 py-2 ${
+          <p
+            className={`mt-2 ${
               darkMode
-                ? 'bg-[#1e293b]'
-                : 'bg-white'
+                ? 'text-gray-400'
+                : 'text-gray-600'
             }`}
           >
-            {darkMode
-              ? '☀️'
-              : '🌙'}
-          </button>
+            Manage your account settings
+          </p>
 
         </div>
 
-        {/* PROFILE CARD */}
-
-        <div
-          className={`max-w-2xl rounded-2xl p-8 ${
+        <button
+          onClick={toggleTheme}
+          className={`rounded-lg border px-4 py-2 ${
             darkMode
               ? 'bg-[#1e293b]'
               : 'bg-white'
           }`}
         >
+          {darkMode
+            ? '☀️'
+            : '🌙'}
+        </button>
 
-          <h2 className="mb-8 text-3xl font-bold">
-            Profile Information
-          </h2>
+      </div>
 
-          {/* NAME */}
+      {/* PROFILE CARD */}
 
-          <div className="mb-6">
+      <div
+        className={`max-w-2xl rounded-2xl p-8 ${
+          darkMode
+            ? 'bg-[#1e293b]'
+            : 'bg-white'
+        }`}
+      >
 
-            <label className="mb-2 block text-gray-400">
-              Name
-            </label>
+        <h2 className="mb-8 text-3xl font-bold">
+          Profile Information
+        </h2>
 
-            <input
-              type="text"
-              value={user.name || ''}
-              readOnly
-              className="w-full rounded-lg border border-gray-600 bg-transparent p-4"
-            />
+        {/* NAME */}
 
-          </div>
+        <div className="mb-6">
 
-          {/* EMAIL */}
+          <label className="mb-2 block text-gray-400">
+            Name
+          </label>
 
-          <div className="mb-6">
+          <input
+            type="text"
+            value={user?.name || ''}
+            readOnly
+            className="w-full rounded-lg border border-gray-600 bg-transparent p-4"
+          />
 
-            <label className="mb-2 block text-gray-400">
-              Email
-            </label>
+        </div>
 
-            <input
-              type="email"
-              value={user.email || ''}
-              readOnly
-              className="w-full rounded-lg border border-gray-600 bg-transparent p-4"
-            />
+        {/* EMAIL */}
 
-          </div>
+        <div className="mb-6">
 
-          {/* ROLE */}
+          <label className="mb-2 block text-gray-400">
+            Email
+          </label>
 
-          <div className="mb-8">
+          <input
+            type="email"
+            value={user?.email || ''}
+            readOnly
+            className="w-full rounded-lg border border-gray-600 bg-transparent p-4"
+          />
 
-            <label className="mb-2 block text-gray-400">
-              Role
-            </label>
+        </div>
 
-            <input
-              type="text"
-              value={user.role || ''}
-              readOnly
-              className="w-full rounded-lg border border-gray-600 bg-transparent p-4"
-            />
+        {/* ROLE */}
 
-          </div>
+        <div className="mb-8">
 
-          {/* ACTIONS */}
+          <label className="mb-2 block text-gray-400">
+            Role
+          </label>
 
-          <div className="flex gap-4">
+          <input
+            type="text"
+            value={user?.role || ''}
+            readOnly
+            className="w-full rounded-lg border border-gray-600 bg-transparent p-4"
+          />
 
-            <button
-              className="rounded-lg bg-blue-500 px-6 py-3 text-white"
-            >
-              Update Profile
-            </button>
+        </div>
 
-            <button
-              onClick={handleLogout}
-              className="rounded-lg bg-red-500 px-6 py-3 text-white"
-            >
-              Logout
-            </button>
+        {/* ACTIONS */}
 
-          </div>
+        <div className="flex gap-4">
+
+          <button
+            className="rounded-lg bg-blue-500 px-6 py-3 text-white"
+          >
+            Update Profile
+          </button>
+
+          <button
+            onClick={logout}
+            className="rounded-lg bg-red-500 px-6 py-3 text-white"
+          >
+            Logout
+          </button>
 
         </div>
 
       </div>
-
-    </div>
+    </Layout>
   );
 };
 

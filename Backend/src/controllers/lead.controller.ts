@@ -1,5 +1,6 @@
 import { Response } from 'express';
-import Lead from '../models/Lead.model';
+import mongoose from 'mongoose';
+import Lead, { ILead } from '../models/Lead.model';
 import { AuthRequest } from '../middleware/auth.middleware';
 import { Parser } from 'json2csv';
 
@@ -12,12 +13,21 @@ export const createLead = async (
   try {
     const { name, email, status, source } = req.body;
 
+    const user = req.user;
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Not authorized',
+      });
+    }
+
     const lead = await Lead.create({
       name,
       email,
       status,
       source,
-      createdBy: req.user._id,
+      createdBy: user._id,
     });
 
     res.status(201).json({
@@ -51,34 +61,49 @@ export const getLeads = async (
       page = '1',
     } = req.query;
 
-    const query: Record<string, any> = {};
+    const statusFilter =
+      typeof status === 'string'
+        ? (status as ILead['status'])
+        : undefined;
+    const sourceFilter =
+      typeof source === 'string'
+        ? (source as ILead['source'])
+        : undefined;
+    const searchFilter =
+      typeof search === 'string' ? search : undefined;
+    const sortOptionString =
+      typeof sort === 'string' ? sort : 'latest';
+    const pageString =
+      typeof page === 'string' ? page : '1';
+
+    const query: Record<string, unknown> = {};
 
     // FILTER BY STATUS
 
-    if (status) {
-      query.status = status;
+    if (statusFilter) {
+      query.status = statusFilter;
     }
 
     // FILTER BY SOURCE
 
-    if (source) {
-      query.source = source;
+    if (sourceFilter) {
+      query.source = sourceFilter;
     }
 
     // SEARCH BY NAME OR EMAIL
 
-    if (search) {
+    if (searchFilter) {
       query.$or = [
         {
           name: {
-            $regex: search,
+            $regex: searchFilter,
             $options: 'i',
           },
         },
 
         {
           email: {
-            $regex: search,
+            $regex: searchFilter,
             $options: 'i',
           },
         },
@@ -89,14 +114,14 @@ export const getLeads = async (
 
     const limit = 10;
 
-    const currentPage = Number(page) || 1;
+    const currentPage = Number(pageString) || 1;
 
     const skip = (currentPage - 1) * limit;
 
     // SORTING
 
     const sortOption: Record<string, 1 | -1> =
-      sort === 'oldest'
+      sortOptionString === 'oldest'
         ? { createdAt: 1 }
         : { createdAt: -1 };
 
@@ -188,11 +213,20 @@ export const updateLead = async (
       });
     }
 
+    const user = req.user;
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Not authorized',
+      });
+    }
+
     // RBAC
 
     if (
-      req.user.role !== 'admin' &&
-      String(lead.createdBy) !== String(req.user._id)
+      user.role !== 'admin' &&
+      String(lead.createdBy) !== String(user._id)
     ) {
       return res.status(403).json({
         success: false,
@@ -239,11 +273,20 @@ export const deleteLead = async (
       });
     }
 
+    const user = req.user;
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Not authorized',
+      });
+    }
+
     // RBAC
 
     if (
-      req.user.role !== 'admin' &&
-      String(lead.createdBy) !== String(req.user._id)
+      user.role !== 'admin' &&
+      String(lead.createdBy) !== String(user._id)
     ) {
       return res.status(403).json({
         success: false,

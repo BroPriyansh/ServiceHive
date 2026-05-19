@@ -57,7 +57,7 @@ export const registerUser = async (
 
         // NEVER TRUST FRONTEND ROLE
 
-        role: 'user',
+        role: 'sales',
       });
 
     res.status(201).json({
