@@ -53,17 +53,27 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 px-4 py-10 text-white">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.18),_transparent_24%),radial-gradient(circle_at_bottom_right,_rgba(14,165,233,0.14),_transparent_20%)]" />
+
       <form
         onSubmit={handleSubmit}
-        className="w-[400px] rounded-lg bg-white p-6 shadow-md"
+        className="relative z-10 w-full max-w-md rounded-4xl border border-white/10 bg-slate-950/95 p-10 shadow-2xl shadow-slate-950/40"
       >
-        <h1 className="mb-5 text-2xl font-bold">
-          Login
-        </h1>
+        <div className="mb-8">
+          <p className="text-sm uppercase tracking-[0.35em] text-cyan-400">
+            Welcome back
+          </p>
+          <h1 className="mt-4 text-4xl font-semibold">
+            Login to ServiceHive
+          </h1>
+          <p className="mt-3 text-slate-400">
+            Access your dashboard, manage leads, and stay on top of deals.
+          </p>
+        </div>
 
         {error && (
-          <p className="mb-4 rounded bg-red-100 p-3 text-center text-red-700">
+          <p className="mb-4 rounded-3xl bg-rose-500/10 px-4 py-3 text-center text-rose-400">
             {error}
           </p>
         )}
@@ -74,7 +84,8 @@ const LoginPage = () => {
           placeholder="Email"
           value={formData.email}
           onChange={handleChange}
-          className="mb-4 w-full rounded border p-3"
+          className="input-field mb-4"
+          required
         />
 
         <input
@@ -83,21 +94,22 @@ const LoginPage = () => {
           placeholder="Password"
           value={formData.password}
           onChange={handleChange}
-          className="mb-4 w-full rounded border p-3"
+          className="input-field mb-6"
+          required
         />
 
         <button
           type="submit"
-          className="w-full rounded bg-black py-3 text-white"
+          className="btn-primary w-full"
         >
           Login
         </button>
 
-        <p className="mt-4 text-center text-gray-600">
-          Don't have an account?{' '}
+        <p className="mt-5 text-center text-slate-400">
+          Don&apos;t have an account?{' '}
           <Link 
             to="/register" 
-            className="text-blue-500 hover:underline"
+            className="text-cyan-300 hover:text-cyan-200"
           >
             Register
           </Link>

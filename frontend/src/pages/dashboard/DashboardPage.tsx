@@ -26,7 +26,7 @@ const DashboardPage = () => {
           qualified: leads.filter((l: { status: string }) => l.status === 'Qualified').length,
           contacted: leads.filter((l: { status: string }) => l.status === 'Contacted').length,
         });
-      } catch (err) {
+      } catch {
         setError('Failed to load dashboard data');
       } finally {
         setLoading(false);
@@ -37,106 +37,61 @@ const DashboardPage = () => {
 
   return (
     <Layout>
-      {/* TOP */}
+      <div className="mb-10 overflow-hidden rounded-4xl bg-gradient-to-br from-cyan-500 via-sky-500 to-indigo-600 p-10 text-white shadow-2xl shadow-cyan-500/20">
+        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-sm uppercase tracking-[0.35em] text-cyan-100/90">
+              Dashboard
+            </p>
+            <h1 className="mt-4 text-5xl font-semibold">
+              Your CRM cockpit
+            </h1>
+            <p className="mt-3 max-w-xl text-slate-100/90">
+              Track lead momentum, review key metrics, and stay focused on growth.
+            </p>
+          </div>
 
-      <div className="mb-10 flex items-center justify-between">
-
-        <div>
-
-          <h1 className="text-5xl font-bold">
-            Dashboard
-          </h1>
-
-          <p
-            className={`mt-2 ${
-              darkMode
-                ? 'text-gray-400'
-                : 'text-gray-600'
-            }`}
+          <button
+            onClick={toggleTheme}
+            className="btn-secondary"
           >
-            Welcome to your CRM dashboard
-          </p>
-
+            {darkMode ? 'Switch to Light' : 'Switch to Dark'}
+          </button>
         </div>
-
-        <button
-          onClick={toggleTheme}
-          className={`rounded-lg border px-4 py-2 ${
-            darkMode
-              ? 'bg-[#1e293b]'
-              : 'bg-white'
-          }`}
-        >
-          {darkMode
-            ? '☀️'
-            : '🌙'}
-        </button>
-
       </div>
 
-      {/* STATS */}
-
       {loading ? (
-        <p className="text-gray-400">Loading...</p>
+        <p className="text-slate-400">Loading...</p>
       ) : error ? (
-        <p className="text-red-500">{error}</p>
+        <p className="text-rose-400">{error}</p>
       ) : (
-        <div className="grid grid-cols-3 gap-6">
-
-          <div
-            className={`rounded-2xl p-8 ${
-              darkMode
-                ? 'bg-[#1e293b]'
-                : 'bg-white'
-            }`}
-          >
-
-            <h2 className="text-gray-400">
+        <div className="grid gap-6 md:grid-cols-3">
+          <div className="card-panel">
+            <h2 className="text-sm uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">
               Total Leads
             </h2>
-
-            <p className="mt-4 text-5xl font-bold">
+            <p className="mt-4 text-5xl font-semibold text-slate-950 dark:text-white">
               {stats.total}
             </p>
-
           </div>
 
-          <div
-            className={`rounded-2xl p-8 ${
-              darkMode
-                ? 'bg-[#1e293b]'
-                : 'bg-white'
-            }`}
-          >
-
-            <h2 className="text-gray-400">
+          <div className="card-panel">
+            <h2 className="text-sm uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">
               Qualified
             </h2>
-
-            <p className="mt-4 text-5xl font-bold">
+            <p className="mt-4 text-5xl font-semibold text-slate-950 dark:text-white">
               {stats.qualified}
             </p>
-
           </div>
 
-          <div
-            className={`rounded-2xl p-8 ${
-              darkMode
-                ? 'bg-[#1e293b]'
-                : 'bg-white'
-            }`}
-          >
-
-            <h2 className="text-gray-400">
+          <div className="card-panel">
+            <h2 className="text-sm uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">
               Contacted
             </h2>
-
-            <p className="mt-4 text-5xl font-bold">
+            <p className="mt-4 text-5xl font-semibold text-slate-950 dark:text-white">
               {stats.contacted}
             </p>
-
           </div>
-
         </div>
       )}
     </Layout>

@@ -10,11 +10,41 @@ import authRoutes from './routes/auth.routes';
 
 const app = express();
 
+const normalizeOrigin = (origin: string) =>
+  origin.trim().replace(/\/+$/u, '');
+
+// Normalize configured origins so trailing slashes do not break CORS matching.
+// Supports comma-separated values like http://localhost:5173,https://service-hive-nu.vercel.app
+const allowedOrigins = (
+  process.env.CLIENT_URL ||
+  'http://localhost:5173'
+)
+  .split(',')
+  .map((origin) => normalizeOrigin(origin))
+  .filter(Boolean);
+
 app.use(
   cors({
-    origin:
-      process.env.CLIENT_URL ||
-      'http://localhost:5173',
+    origin: (origin, callback) => {
+      if (!origin) {
+        callback(null, true);
+        return;
+      }
+
+      const normalizedOrigin = normalizeOrigin(origin);
+
+      if (allowedOrigins.includes(normalizedOrigin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(
+        new Error(
+          `Origin ${origin} is not allowed by CORS`
+        )
+      );
+    },
+    credentials: true,
   })
 );
 app.use(helmet());

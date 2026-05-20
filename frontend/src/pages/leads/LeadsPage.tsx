@@ -241,333 +241,171 @@ const LeadsPage = () => {
     <Layout>
       {/* TOP */}
 
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-8 rounded-4xl border border-slate-200/80 bg-white/90 p-8 shadow-lg shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-950/80">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <h1 className="text-5xl font-semibold tracking-tight">
+              Leads
+            </h1>
+            <p className="mt-2 text-slate-500 dark:text-slate-400">
+              Manage all your leads with clear filters and fast actions.
+            </p>
+          </div>
 
-        <div>
-
-          <h1 className="text-5xl font-bold">
-            Leads
-          </h1>
-
-          <p
-            className={`mt-2 ${
-              darkMode
-                ? 'text-gray-400'
-                : 'text-gray-600'
-            }`}
-          >
-            Manage all your leads
-          </p>
-
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={toggleTheme}
+              className="btn-secondary"
+            >
+              {darkMode ? 'Switch to Light' : 'Switch to Dark'}
+            </button>
+            <button
+              onClick={handleExport}
+              className="btn-primary"
+            >
+              Export CSV
+            </button>
+            <button
+              onClick={() => setShowModal(true)}
+              className="btn-secondary"
+            >
+              Add Lead
+            </button>
+          </div>
         </div>
-
-        <div className="flex gap-3">
-
-          <button
-            onClick={toggleTheme}
-            className={`rounded-lg border px-4 py-2 ${
-              darkMode
-                ? 'bg-[#1e293b]'
-                : 'bg-white'
-            }`}
-          >
-            {darkMode
-              ? '☀️'
-              : '🌙'}
-          </button>
-
-          <button
-            onClick={handleExport}
-            className="rounded-lg bg-green-500 px-5 py-2 text-white"
-          >
-            Export CSV
-          </button>
-
-          <button
-            onClick={() =>
-              setShowModal(true)
-            }
-            className="rounded-lg bg-white px-5 py-2 text-black"
-          >
-            Add Lead
-          </button>
-
-        </div>
-
       </div>
 
-        {/* FILTERS */}
+        <div className="mb-8 rounded-4xl border border-slate-200/70 bg-white/90 p-5 shadow-sm shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-950/80">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <input
+              type="text"
+              placeholder="Search leads"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="input-field"
+            />
 
-        <div className="mb-8 grid grid-cols-4 gap-4">
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="input-field"
+            >
+              <option value="">All Status</option>
+              <option value="New">New</option>
+              <option value="Contacted">Contacted</option>
+              <option value="Qualified">Qualified</option>
+              <option value="Lost">Lost</option>
+            </select>
 
-          <input
-            type="text"
-            placeholder="Search..."
-            value={search}
-            onChange={(e) =>
-              setSearch(
-                e.target.value
-              )
-            }
-            className={`rounded-lg border p-4 outline-none ${
-              darkMode
-                ? 'border-gray-700 bg-[#1e293b]'
-                : 'bg-white'
-            }`}
-          />
+            <select
+              value={sourceFilter}
+              onChange={(e) => setSourceFilter(e.target.value)}
+              className="input-field"
+            >
+              <option value="">All Sources</option>
+              <option value="Website">Website</option>
+              <option value="Instagram">Instagram</option>
+              <option value="Referral">Referral</option>
+            </select>
 
-          <select
-            value={statusFilter}
-            onChange={(e) =>
-              setStatusFilter(
-                e.target.value
-              )
-            }
-            className={`rounded-lg border p-4 ${
-              darkMode
-                ? 'border-gray-700 bg-[#1e293b]'
-                : 'bg-white'
-            }`}
-          >
-
-            <option value="">
-              All Status
-            </option>
-
-            <option value="New">
-              New
-            </option>
-
-            <option value="Contacted">
-              Contacted
-            </option>
-
-            <option value="Qualified">
-              Qualified
-            </option>
-
-            <option value="Lost">
-              Lost
-            </option>
-
-          </select>
-
-          <select
-            value={sourceFilter}
-            onChange={(e) =>
-              setSourceFilter(
-                e.target.value
-              )
-            }
-            className={`rounded-lg border p-4 ${
-              darkMode
-                ? 'border-gray-700 bg-[#1e293b]'
-                : 'bg-white'
-            }`}
-          >
-
-            <option value="">
-              All Sources
-            </option>
-
-            <option value="Website">
-              Website
-            </option>
-
-            <option value="Instagram">
-              Instagram
-            </option>
-
-            <option value="Referral">
-              Referral
-            </option>
-
-          </select>
-
-          <select
-            value={sort}
-            onChange={(e) =>
-              setSort(
-                e.target.value
-              )
-            }
-            className={`rounded-lg border p-4 ${
-              darkMode
-                ? 'border-gray-700 bg-[#1e293b]'
-                : 'bg-white'
-            }`}
-          >
-
-            <option value="latest">
-              Latest
-            </option>
-
-            <option value="oldest">
-              Oldest
-            </option>
-
-          </select>
-
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+              className="input-field"
+            >
+              <option value="latest">Latest</option>
+              <option value="oldest">Oldest</option>
+            </select>
+          </div>
         </div>
 
-        {/* TABLE */}
-
-        <div
-          className={`overflow-hidden rounded-2xl ${
-            darkMode
-              ? 'bg-[#1e293b]'
-              : 'bg-white'
-          }`}
-        >
-
-          <table className="w-full">
-
-            <thead>
-
-              <tr
-                className={`border-b ${
-                  darkMode
-                    ? 'border-gray-700'
-                    : 'border-gray-300'
-                }`}
-              >
-
-                <th className="p-5 text-left">
+        <div className="overflow-hidden rounded-4xl border border-slate-200/80 bg-white/90 shadow-lg shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-950/80">
+          <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
+            <thead className="bg-slate-50 dark:bg-slate-900">
+              <tr>
+                <th className="p-5 text-left text-sm uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
                   Name
                 </th>
-
-                <th className="p-5 text-left">
+                <th className="p-5 text-left text-sm uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
                   Email
                 </th>
-
-                <th className="p-5 text-left">
+                <th className="p-5 text-left text-sm uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
                   Status
                 </th>
-
-                <th className="p-5 text-left">
+                <th className="p-5 text-left text-sm uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
                   Source
                 </th>
-
-                <th className="p-5 text-left">
+                <th className="p-5 text-left text-sm uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
                   Actions
                 </th>
-
               </tr>
-
             </thead>
 
-            <tbody>
-
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
               {loading ? (
-
                 <tr>
-
-                  <td
-                    colSpan={5}
-                    className="p-5 text-center"
-                  >
+                  <td colSpan={5} className="p-10 text-center text-slate-500 dark:text-slate-400">
                     Loading...
                   </td>
-
                 </tr>
-
               ) : (
-
                 leads.map((lead) => (
-
-                  <tr
-                    key={lead._id}
-                    className={`border-b ${
-                      darkMode
-                        ? 'border-gray-700'
-                        : 'border-gray-300'
-                    }`}
-                  >
-
-                    <td className="p-5">
+                  <tr key={lead._id} className="transition hover:bg-slate-50 dark:hover:bg-slate-800">
+                    <td className="p-5 text-slate-900 dark:text-slate-100">
                       {lead.name}
                     </td>
-
-                    <td className="p-5">
+                    <td className="p-5 text-slate-500 dark:text-slate-400">
                       {lead.email}
                     </td>
-
                     <td className="p-5">
-                      {lead.status}
+                      <span className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                        {lead.status}
+                      </span>
                     </td>
-
-                    <td className="p-5">
+                    <td className="p-5 text-slate-500 dark:text-slate-400">
                       {lead.source}
                     </td>
-
-                    <td className="space-x-2 p-5">
-
-                      <button
-                        onClick={() =>
-                          handleEditClick(
-                            lead
-                          )
-                        }
-                        className="rounded bg-blue-500 px-4 py-2 text-white"
-                      >
-                        Edit
-                      </button>
-
-                      <button
-                        onClick={() =>
-                          handleDelete(
-                            lead._id
-                          )
-                        }
-                        className="rounded bg-red-500 px-4 py-2 text-white"
-                      >
-                        Delete
-                      </button>
-
+                    <td className="p-5">
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          onClick={() => handleEditClick(lead)}
+                          className="btn-secondary"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(lead._id)}
+                          className="btn-primary bg-rose-500 hover:bg-rose-400 dark:bg-rose-500 dark:hover:bg-rose-400"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
-
                   </tr>
-
                 ))
-
               )}
-
             </tbody>
-
           </table>
-
         </div>
 
       {/* CREATE MODAL */}
 
       {showModal && (
 
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50">
-
-          <div
-            className={`w-full max-w-md rounded-2xl p-8 ${
-              darkMode
-                ? 'bg-[#1e293b]'
-                : 'bg-white'
-            }`}
-          >
-
-            <h2 className="mb-6 text-3xl font-bold">
+        <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/60 p-4">
+          <div className="glass-card w-full max-w-md">
+            <h2 className="mb-6 text-3xl font-semibold">
               Add Lead
             </h2>
 
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-4"
-            >
-
+            <form onSubmit={handleSubmit} className="space-y-4">
               <input
                 type="text"
                 name="name"
                 placeholder="Name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full rounded-lg border p-4 text-black"
+                className="input-field"
                 required
               />
 
@@ -577,7 +415,7 @@ const LeadsPage = () => {
                 placeholder="Email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full rounded-lg border p-4 text-black"
+                className="input-field"
                 required
               />
 
@@ -585,107 +423,59 @@ const LeadsPage = () => {
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
-                className="w-full rounded-lg border p-4 text-black"
+                className="input-field"
               >
-
-                <option>
-                  New
-                </option>
-
-                <option>
-                  Contacted
-                </option>
-
-                <option>
-                  Qualified
-                </option>
-
-                <option>
-                  Lost
-                </option>
-
+                <option>New</option>
+                <option>Contacted</option>
+                <option>Qualified</option>
+                <option>Lost</option>
               </select>
 
               <select
                 name="source"
                 value={formData.source}
                 onChange={handleChange}
-                className="w-full rounded-lg border p-4 text-black"
+                className="input-field"
               >
-
-                <option>
-                  Website
-                </option>
-
-                <option>
-                  Instagram
-                </option>
-
-                <option>
-                  Referral
-                </option>
-
+                <option>Website</option>
+                <option>Instagram</option>
+                <option>Referral</option>
               </select>
 
-              <div className="flex gap-3">
-
-                <button
-                  type="submit"
-                  className="flex-1 rounded-lg bg-black py-3 text-white"
-                >
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <button type="submit" className="btn-primary w-full sm:w-auto">
                   Create
                 </button>
-
                 <button
                   type="button"
-                  onClick={() =>
-                    setShowModal(false)
-                  }
-                  className="flex-1 rounded-lg bg-gray-300 py-3 text-black"
+                  onClick={() => setShowModal(false)}
+                  className="btn-secondary w-full sm:w-auto"
                 >
                   Cancel
                 </button>
-
               </div>
-
             </form>
-
           </div>
-
         </div>
-
       )}
 
       {/* EDIT MODAL */}
 
       {showEditModal && (
-
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50">
-
-          <div
-            className={`w-full max-w-md rounded-2xl p-8 ${
-              darkMode
-                ? 'bg-[#1e293b]'
-                : 'bg-white'
-            }`}
-          >
-
-            <h2 className="mb-6 text-3xl font-bold">
+        <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/60 p-4">
+          <div className="glass-card w-full max-w-md">
+            <h2 className="mb-6 text-3xl font-semibold">
               Edit Lead
             </h2>
 
-            <form
-              onSubmit={handleUpdateLead}
-              className="space-y-4"
-            >
-
+            <form onSubmit={handleUpdateLead} className="space-y-4">
               <input
                 type="text"
                 name="name"
                 placeholder="Name"
                 value={editFormData.name}
                 onChange={handleEditChange}
-                className="w-full rounded-lg border p-4 text-black"
+                className="input-field"
                 required
               />
 
@@ -695,7 +485,7 @@ const LeadsPage = () => {
                 placeholder="Email"
                 value={editFormData.email}
                 onChange={handleEditChange}
-                className="w-full rounded-lg border p-4 text-black"
+                className="input-field"
                 required
               />
 
@@ -703,75 +493,40 @@ const LeadsPage = () => {
                 name="status"
                 value={editFormData.status}
                 onChange={handleEditChange}
-                className="w-full rounded-lg border p-4 text-black"
+                className="input-field"
               >
-
-                <option>
-                  New
-                </option>
-
-                <option>
-                  Contacted
-                </option>
-
-                <option>
-                  Qualified
-                </option>
-
-                <option>
-                  Lost
-                </option>
-
+                <option>New</option>
+                <option>Contacted</option>
+                <option>Qualified</option>
+                <option>Lost</option>
               </select>
 
               <select
                 name="source"
                 value={editFormData.source}
                 onChange={handleEditChange}
-                className="w-full rounded-lg border p-4 text-black"
+                className="input-field"
               >
-
-                <option>
-                  Website
-                </option>
-
-                <option>
-                  Instagram
-                </option>
-
-                <option>
-                  Referral
-                </option>
-
+                <option>Website</option>
+                <option>Instagram</option>
+                <option>Referral</option>
               </select>
 
-              <div className="flex gap-3">
-
-                <button
-                  type="submit"
-                  className="flex-1 rounded-lg bg-blue-500 py-3 text-white"
-                >
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <button type="submit" className="btn-primary w-full sm:w-auto">
                   Update
                 </button>
-
                 <button
                   type="button"
-                  onClick={() =>
-                    setShowEditModal(false)
-                  }
-                  className="flex-1 rounded-lg bg-gray-300 py-3 text-black"
+                  onClick={() => setShowEditModal(false)}
+                  className="btn-secondary w-full sm:w-auto"
                 >
                   Cancel
                 </button>
-
               </div>
-
             </form>
-
           </div>
-
         </div>
-
       )}
 
     </Layout>

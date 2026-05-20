@@ -11,125 +11,78 @@ const SettingsPage = () => {
     <Layout>
       {/* TOP */}
 
-      <div className="mb-10 flex items-center justify-between">
-
+      <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
         <div>
-
-          <h1 className="text-5xl font-bold">
+          <h1 className="text-5xl font-semibold tracking-tight">
             Settings
           </h1>
-
-          <p
-            className={`mt-2 ${
-              darkMode
-                ? 'text-gray-400'
-                : 'text-gray-600'
-            }`}
-          >
-            Manage your account settings
+          <p className="mt-2 max-w-xl text-slate-500 dark:text-slate-400">
+            Manage your account, appearance preferences, and logout options.
           </p>
-
         </div>
 
         <button
           onClick={toggleTheme}
-          className={`rounded-lg border px-4 py-2 ${
-            darkMode
-              ? 'bg-[#1e293b]'
-              : 'bg-white'
-          }`}
+          className="btn-secondary"
         >
-          {darkMode
-            ? '☀️'
-            : '🌙'}
+          {darkMode ? 'Switch to Light' : 'Switch to Dark'}
         </button>
-
       </div>
 
       {/* PROFILE CARD */}
 
-      <div
-        className={`max-w-2xl rounded-2xl p-8 ${
-          darkMode
-            ? 'bg-[#1e293b]'
-            : 'bg-white'
-        }`}
-      >
-
+      <div className="glass-card max-w-2xl">
         <h2 className="mb-8 text-3xl font-bold">
           Profile Information
         </h2>
 
-        {/* NAME */}
-
         <div className="mb-6">
-
-          <label className="mb-2 block text-gray-400">
+          <label className="mb-2 block text-sm font-semibold text-slate-500 dark:text-slate-400">
             Name
           </label>
-
           <input
             type="text"
             value={user?.name || ''}
             readOnly
-            className="w-full rounded-lg border border-gray-600 bg-transparent p-4"
+            className="input-field bg-slate-50 dark:bg-slate-950/80"
           />
-
         </div>
 
-        {/* EMAIL */}
-
         <div className="mb-6">
-
-          <label className="mb-2 block text-gray-400">
+          <label className="mb-2 block text-sm font-semibold text-slate-500 dark:text-slate-400">
             Email
           </label>
-
           <input
             type="email"
             value={user?.email || ''}
             readOnly
-            className="w-full rounded-lg border border-gray-600 bg-transparent p-4"
+            className="input-field bg-slate-50 dark:bg-slate-950/80"
           />
-
         </div>
 
-        {/* ROLE */}
-
         <div className="mb-8">
-
-          <label className="mb-2 block text-gray-400">
+          <label className="mb-2 block text-sm font-semibold text-slate-500 dark:text-slate-400">
             Role
           </label>
-
           <input
             type="text"
             value={user?.role || ''}
             readOnly
-            className="w-full rounded-lg border border-gray-600 bg-transparent p-4"
+            className="input-field bg-slate-50 dark:bg-slate-950/80"
           />
-
         </div>
 
-        {/* ACTIONS */}
-
-        <div className="flex gap-4">
-
-          <button
-            className="rounded-lg bg-blue-500 px-6 py-3 text-white"
-          >
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <button className="btn-primary w-full sm:w-auto">
             Update Profile
           </button>
-
           <button
             onClick={logout}
-            className="rounded-lg bg-red-500 px-6 py-3 text-white"
+            className="btn-secondary w-full sm:w-auto"
           >
             Logout
           </button>
-
         </div>
-
       </div>
     </Layout>
   );

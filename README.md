@@ -173,6 +173,9 @@ npm install
    JWT_SECRET=your_secure_random_string_here
 
    # CORS Configuration
+   # You can allow multiple origins by separating them with commas.
+   # Example for local development plus deployed frontend:
+   # CLIENT_URL=http://localhost:5173,https://service-hive-nu.vercel.app
    CLIENT_URL=http://localhost:5173
    ```
 
@@ -369,7 +372,9 @@ This project is licensed under the ISC License - see the LICENSE file for detail
 - Check if `MONGO_URI` in `.env` is correct
 
 ### CORS Errors
-- Verify that `CLIENT_URL` in Backend `.env` matches your frontend URL
+- Verify that `CLIENT_URL` in Backend `.env` matches your frontend URL exactly
+- Use the deployed frontend origin without a trailing slash (for example `https://service-hive-nu.vercel.app`)
+- If using Render or another host, redeploy/restart after updating `CLIENT_URL`
 - Check that `VITE_API_URL` in frontend `.env.local` matches your backend URL
 
 ### Port Already in Use
