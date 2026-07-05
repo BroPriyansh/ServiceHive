@@ -1,5 +1,4 @@
 import { Response } from 'express';
-import mongoose from 'mongoose';
 import Lead, { ILead } from '../models/Lead.model';
 import { AuthRequest } from '../middleware/auth.middleware';
 import { Parser } from 'json2csv';
@@ -61,6 +60,15 @@ export const getLeads = async (
       page = '1',
     } = req.query;
 
+    const user = req.user;
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Not authorized',
+      });
+    }
+
     const statusFilter =
       typeof status === 'string'
         ? (status as ILead['status'])
@@ -76,7 +84,9 @@ export const getLeads = async (
     const pageString =
       typeof page === 'string' ? page : '1';
 
-    const query: Record<string, unknown> = {};
+    const query: Record<string, unknown> = {
+      createdBy: user._id,
+    };
 
     // FILTER BY STATUS
 
@@ -170,15 +180,40 @@ export const getSingleLead = async (
   res: Response
 ) => {
   try {
-    const lead = await Lead.findById(req.params.id).populate(
-      'createdBy',
-      'name email'
-    );
+    const user = req.user;
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Not authorized',
+      });
+    }
+
+    const lead = await Lead.findOne({
+      _id: req.params.id,
+      createdBy: user._id,
+    }).populate('createdBy', 'name email');
 
     if (!lead) {
       return res.status(404).json({
         success: false,
         message: 'Lead not found',
+      });
+    }
+
+    // Ownership check.
+    // NOTE: createdBy is populated above, so it is a full User document,
+    // not a raw ObjectId. Do NOT compare with String(lead.createdBy) —
+    // Mongoose Document.toString() dumps the whole object, not the id,
+    // so that comparison would always fail, even for the real owner.
+    // .equals() works correctly whether createdBy is populated or not.
+    if (
+      user.role !== 'admin' &&
+      !lead.createdBy.equals(user._id)
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: 'Not authorized',
       });
     }
 
@@ -204,15 +239,6 @@ export const updateLead = async (
   res: Response
 ) => {
   try {
-    const lead = await Lead.findById(req.params.id);
-
-    if (!lead) {
-      return res.status(404).json({
-        success: false,
-        message: 'Lead not found',
-      });
-    }
-
     const user = req.user;
 
     if (!user) {
@@ -222,23 +248,36 @@ export const updateLead = async (
       });
     }
 
-    // RBAC
+    const lead = await Lead.findOne({
+      _id: req.params.id,
+      createdBy: user._id,
+    });
 
-    if (
-      user.role !== 'admin' &&
-      String(lead.createdBy) !== String(user._id)
-    ) {
-      return res.status(403).json({
+    if (!lead) {
+      return res.status(404).json({
         success: false,
-        message: 'Not authorized',
+        message: 'Lead not found',
+      });
+    }
+
+    const allowedUpdates = ['name', 'email', 'status', 'source'];
+    const updates = Object.fromEntries(
+      Object.entries(req.body).filter(([key]) => allowedUpdates.includes(key))
+    );
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'No valid fields provided for update',
       });
     }
 
     const updatedLead = await Lead.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      updates,
       {
         new: true,
+        runValidators: true,
       }
     );
 
@@ -264,15 +303,6 @@ export const deleteLead = async (
   res: Response
 ) => {
   try {
-    const lead = await Lead.findById(req.params.id);
-
-    if (!lead) {
-      return res.status(404).json({
-        success: false,
-        message: 'Lead not found',
-      });
-    }
-
     const user = req.user;
 
     if (!user) {
@@ -282,15 +312,15 @@ export const deleteLead = async (
       });
     }
 
-    // RBAC
+    const lead = await Lead.findOne({
+      _id: req.params.id,
+      createdBy: user._id,
+    });
 
-    if (
-      user.role !== 'admin' &&
-      String(lead.createdBy) !== String(user._id)
-    ) {
-      return res.status(403).json({
+    if (!lead) {
+      return res.status(404).json({
         success: false,
-        message: 'Not authorized',
+        message: 'Lead not found',
       });
     }
 
@@ -315,7 +345,18 @@ export const exportLeadsCSV = async (
   res: Response
 ) => {
   try {
-    const leads = await Lead.find().select(
+    const user = req.user;
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Not authorized',
+      });
+    }
+
+    const leads = await Lead.find({
+      createdBy: user._id,
+    }).select(
       'name email status source createdAt'
     );
 

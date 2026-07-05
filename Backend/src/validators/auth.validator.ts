@@ -10,10 +10,12 @@ export const registerValidator = [
     .withMessage('Valid email required'),
 
   body('password')
-    .isLength({ min: 6 })
+    .isLength({ min: 8 })
     .withMessage(
-      'Password must be at least 6 characters'
-    ),
+      'Password must be at least 8 characters'
+    )
+    .matches(/(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9])/)
+    .withMessage('Password must include uppercase, lowercase, number, and special character'),
 ];
 
 export const loginValidator = [

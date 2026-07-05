@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import { protect } from './middleware/auth.middleware';
 import leadRoutes from './routes/lead.routes';
 
+
 import authRoutes from './routes/auth.routes';
 
 const app = express();
@@ -13,8 +14,6 @@ const app = express();
 const normalizeOrigin = (origin: string) =>
   origin.trim().replace(/\/+$/u, '');
 
-// Normalize configured origins so trailing slashes do not break CORS matching.
-// Supports comma-separated values like http://localhost:5173,https://service-hive-nu.vercel.app
 const allowedOrigins = (
   process.env.CLIENT_URL ||
   'http://localhost:5173'

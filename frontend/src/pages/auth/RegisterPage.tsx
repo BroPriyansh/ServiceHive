@@ -3,12 +3,14 @@ import { useNavigate, Link } from 'react-router-dom';
 
 import api from '../../api/axios';
 
+import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../hooks/useAuth';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
 
   const { login } = useAuth();
+  const { darkMode } = useTheme();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -54,27 +56,27 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 px-4 py-10 text-white">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.18),_transparent_24%),radial-gradient(circle_at_bottom_right,_rgba(14,165,233,0.14),_transparent_20%)]" />
+    <div className={`relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10 ${darkMode ? 'bg-slate-950 text-white' : 'bg-[linear-gradient(135deg,#f8fbff_0%,#eef6ff_42%,#f8faff_100%)] text-slate-900'}`}>
+      <div className={`pointer-events-none absolute inset-0 ${darkMode ? 'bg-[radial-gradient(circle_at_top_left,rgba(56,189,248,0.18),transparent_24%),radial-gradient(circle_at_bottom_right,rgba(14,165,233,0.14),transparent_20%)]' : 'bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.14),transparent_24%),radial-gradient(circle_at_bottom_right,rgba(59,130,246,0.12),transparent_20%)]'}`} />
 
       <form
         onSubmit={handleSubmit}
-        className="relative z-10 w-full max-w-md rounded-4xl border border-white/10 bg-slate-950/95 p-10 shadow-2xl shadow-slate-950/40"
+        className={`relative z-10 w-full max-w-md rounded-4xl border p-10 shadow-2xl ${darkMode ? 'border-white/10 bg-slate-950/95 shadow-slate-950/40' : 'border-slate-200/80 bg-white/90 shadow-slate-900/10'}`}
       >
         <div className="mb-8">
-          <p className="text-sm uppercase tracking-[0.35em] text-cyan-400">
+          <p className={`text-sm uppercase tracking-[0.35em] ${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
             Get started
           </p>
           <h1 className="mt-4 text-4xl font-semibold">
             Create a ServiceHive account
           </h1>
-          <p className="mt-3 text-slate-400">
+          <p className={`mt-3 ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
             Register now to manage leads, automate follow-ups, and stay productive.
           </p>
         </div>
 
         {error && (
-          <p className="mb-4 rounded-3xl bg-rose-500/10 px-4 py-3 text-center text-rose-400">
+          <p className={`mb-4 rounded-3xl px-4 py-3 text-center ${darkMode ? 'bg-rose-500/10 text-rose-400' : 'bg-rose-50 text-rose-600'}`}>
             {error}
           </p>
         )}
@@ -117,11 +119,11 @@ const RegisterPage = () => {
           Register
         </button>
 
-        <p className="mt-5 text-center text-slate-400">
+        <p className={`mt-5 text-center ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
           Already have an account?{' '}
           <Link 
             to="/login" 
-            className="text-cyan-300 hover:text-cyan-200"
+            className={`font-medium ${darkMode ? 'text-cyan-300 hover:text-cyan-200' : 'text-cyan-600 hover:text-cyan-500'}`}
           >
             Login
           </Link>

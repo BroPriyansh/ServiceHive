@@ -7,6 +7,7 @@ export const leadValidator = [
 
   body('email')
     .isEmail()
+    .normalizeEmail()
     .withMessage('Valid email required'),
 
   body('status')

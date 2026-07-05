@@ -6,6 +6,13 @@ import {
 import type { ReactNode } from 'react';
 
 import type { User } from '../types';
+import {
+  clearAuthToken,
+  getAuthToken,
+  getAuthUser,
+  setAuthToken,
+  setAuthUser,
+} from '../utils/authToken';
 
 interface AuthContextType {
   user: User | null;
@@ -30,26 +37,16 @@ interface AuthProviderProps {
 export const AuthProvider = ({
   children,
 }: AuthProviderProps) => {
-  const [token, setToken] = useState<string | null>(
-    localStorage.getItem('token')
-  );
+  const [token, setToken] = useState<string | null>(() => getAuthToken());
 
-  const [user, setUser] = useState<User | null>(
-    localStorage.getItem('user')
-      ? JSON.parse(localStorage.getItem('user')!)
-      : null
-  );
+  const [user, setUser] = useState<User | null>(() => getAuthUser());
 
   const login = (
     newToken: string,
     newUser: User
   ) => {
-    localStorage.setItem('token', newToken);
-
-    localStorage.setItem(
-      'user',
-      JSON.stringify(newUser)
-    );
+    setAuthToken(newToken);
+    setAuthUser(newUser);
 
     setToken(newToken);
 
@@ -57,9 +54,7 @@ export const AuthProvider = ({
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-
-    localStorage.removeItem('user');
+    clearAuthToken();
 
     setToken(null);
 

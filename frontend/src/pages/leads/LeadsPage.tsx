@@ -8,12 +8,14 @@ import axios from '../../api/axios';
 import Layout from '../../components/layout/Layout';
 
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../hooks/useAuth';
 
 import type { Lead } from '../../types';
 
 const LeadsPage = () => {
 
   const { darkMode, toggleTheme } = useTheme();
+  const { token } = useAuth();
 
   const [leads, setLeads] = useState<
     Lead[]
@@ -62,32 +64,32 @@ const LeadsPage = () => {
   // FETCH LEADS
 
   const fetchLeads = async () => {
+    if (!token) {
+      setLeads([]);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
 
     try {
-
       const response =
         await axios.get(
           `/leads?search=${search}&status=${statusFilter}&source=${sourceFilter}&sort=${sort}`
         );
 
-      setLeads(
-        response.data.data
-      );
-
+      setLeads(response.data.data);
     } catch (error) {
-
       console.log(error);
-
     } finally {
-
       setLoading(false);
-
     }
   };
 
   useEffect(() => {
-    fetchLeads();
+    void fetchLeads();
   }, [
+    token,
     search,
     statusFilter,
     sourceFilter,
@@ -253,13 +255,16 @@ const LeadsPage = () => {
     <Layout>
       {/* TOP */}
 
-      <div className="mb-8 rounded-4xl border border-slate-200/80 bg-white/90 p-8 shadow-lg shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-950/80">
+      <div className="mb-8 overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white/85 p-8 shadow-[0_18px_60px_rgba(15,23,42,0.06)] backdrop-blur-xl dark:border-slate-700/70 dark:bg-slate-900/80">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h1 className="text-5xl font-semibold tracking-tight">
+            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-indigo-700 dark:border-indigo-500/20 dark:bg-indigo-500/10 dark:text-indigo-300">
+              Lead workspace
+            </div>
+            <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-900 dark:text-white sm:text-5xl">
               Leads
             </h1>
-            <p className="mt-2 text-slate-500 dark:text-slate-400">
+            <p className="mt-2 text-base font-medium text-slate-600 dark:text-slate-300">
               Manage all your leads with clear filters and fast actions.
             </p>
           </div>
@@ -287,7 +292,7 @@ const LeadsPage = () => {
         </div>
       </div>
 
-        <div className="mb-8 rounded-4xl border border-slate-200/70 bg-white/90 p-5 shadow-sm shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-950/80">
+        <div className="mb-8 rounded-[1.5rem] border border-slate-200/80 bg-white/85 p-5 shadow-[0_16px_45px_rgba(15,23,42,0.06)] dark:border-slate-700/70 dark:bg-slate-900/80">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <input
               type="text"
@@ -331,23 +336,23 @@ const LeadsPage = () => {
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-4xl border border-slate-200/80 bg-white/90 shadow-lg shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-950/80">
+        <div className="overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white/90 shadow-[0_20px_55px_rgba(15,23,42,0.08)] dark:border-slate-700/70 dark:bg-slate-900/80">
           <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
-            <thead className="bg-slate-50 dark:bg-slate-900">
+            <thead className="bg-slate-50/80 dark:bg-slate-950/70">
               <tr>
-                <th className="p-5 text-left text-sm uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
+                <th className="p-5 text-left text-sm font-semibold uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">
                   Name
                 </th>
-                <th className="p-5 text-left text-sm uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
+                <th className="p-5 text-left text-sm font-semibold uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">
                   Email
                 </th>
-                <th className="p-5 text-left text-sm uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
+                <th className="p-5 text-left text-sm font-semibold uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">
                   Status
                 </th>
-                <th className="p-5 text-left text-sm uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
+                <th className="p-5 text-left text-sm font-semibold uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">
                   Source
                 </th>
-                <th className="p-5 text-left text-sm uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
+                <th className="p-5 text-left text-sm font-semibold uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">
                   Actions
                 </th>
               </tr>
@@ -356,26 +361,36 @@ const LeadsPage = () => {
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="p-10 text-center text-slate-500 dark:text-slate-400">
+                  <td colSpan={5} className="p-10 text-center text-slate-600 dark:text-slate-300">
                     Loading...
                   </td>
                 </tr>
               ) : (
                 leads.map((lead) => (
-                  <tr key={lead._id} className="transition hover:bg-slate-50 dark:hover:bg-slate-800">
-                    <td className="p-5 text-slate-900 dark:text-slate-100">
+                  <tr key={lead._id} className="transition hover:bg-slate-50/70 dark:hover:bg-slate-800/70">
+                    <td className="p-5 font-semibold text-slate-900 dark:text-slate-100">
                       {lead.name}
                     </td>
-                    <td className="p-5 text-slate-500 dark:text-slate-400">
+                    <td className="p-5 text-slate-700 dark:text-slate-300">
                       {lead.email}
                     </td>
                     <td className="p-5">
-                      <span className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                      <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                        lead.status === 'Qualified'
+                          ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300'
+                          : lead.status === 'Contacted'
+                            ? 'bg-sky-100 text-sky-700 dark:bg-sky-500/15 dark:text-sky-300'
+                            : lead.status === 'Lost'
+                              ? 'bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300'
+                              : 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300'
+                      }`}>
                         {lead.status}
                       </span>
                     </td>
-                    <td className="p-5 text-slate-500 dark:text-slate-400">
-                      {lead.source}
+                    <td className="p-5">
+                      <span className="inline-flex rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                        {lead.source}
+                      </span>
                     </td>
                     <td className="p-5">
                       <div className="flex flex-wrap gap-2">
